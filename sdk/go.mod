@@ -1,4 +1,4 @@
-module github.com/tianyiliu/go-azure-sdk/sdk
+module github.com/hashicorp/go-azure-sdk/sdk
 
 go 1.24.1
 
