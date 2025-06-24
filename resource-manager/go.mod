@@ -1,4 +1,4 @@
-module github.com/tianyiliuMSFT/go-azure-sdk/resource-manager
+module github.com/tianyiliumsft/go-azure-sdk/resource-manager
 
 go 1.24.1
 
