@@ -62,15 +62,21 @@ func (c DisksClient) GrantAccess(ctx context.Context, id commonids.ManagedDiskId
 }
 
 // GrantAccessThenPoll performs GrantAccess then polls until it's completed
-func (c DisksClient) GrantAccessThenPoll(ctx context.Context, id commonids.ManagedDiskId, input GrantAccessData) error {
+func (c DisksClient) GrantAccessThenPoll(ctx context.Context, id commonids.ManagedDiskId, input GrantAccessData) (uri AccessUri, err error) {
 	result, err := c.GrantAccess(ctx, id, input)
 	if err != nil {
-		return fmt.Errorf("performing GrantAccess: %+v", err)
+		return uri, fmt.Errorf("performing GrantAccess: %+v", err)
 	}
 
 	if err := result.Poller.PollUntilDone(ctx); err != nil {
-		return fmt.Errorf("polling after GrantAccess: %+v", err)
+		return uri, fmt.Errorf("polling after GrantAccess: %+v", err)
 	}
 
-	return nil
+	if err := result.Poller.FinalResult(result.Model); err != nil {
+		return uri, fmt.Errorf("performing FinalResult: %+v", err)
+	}
+
+	uri = *result.Model
+
+	return
 }
