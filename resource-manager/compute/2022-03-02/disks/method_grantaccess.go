@@ -1,9 +1,12 @@
 package disks
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
 	"net/http"
 
 	"github.com/hashicorp/go-azure-helpers/resourcemanager/commonids"
@@ -78,12 +81,25 @@ func (c DisksClient) GrantAccessThenPoll(ctx context.Context, id commonids.Manag
 		return uri, fmt.Errorf("performing FinalResult: %+v", err)
 	}
 
-	responseJson, err := json.MarshalIndent(result.HttpResponse, "", "  ")
+	bodyBytes, err := io.ReadAll(result.HttpResponse.Body)
 	if err != nil {
-		fmt.Println(err.Error())
-	} else {
-		fmt.Println(string(responseJson))
+		log.Fatalf("read body failed: %v", err)
 	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(result.HttpResponse.Body)
+
+	var prettyJSON bytes.Buffer
+	err = json.Indent(&prettyJSON, bodyBytes, "", "  ")
+	if err != nil {
+		log.Fatalf("invalid JSON: %v", err)
+	}
+
+	fmt.Println("Response body (pretty):")
+	fmt.Println(prettyJSON.String())
 
 	uri = *result.Model
 
