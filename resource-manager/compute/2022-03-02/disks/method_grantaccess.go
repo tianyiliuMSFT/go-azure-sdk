@@ -1,9 +1,7 @@
 package disks
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -92,14 +90,8 @@ func (c DisksClient) GrantAccessThenPoll(ctx context.Context, id commonids.Manag
 		}
 	}(result.HttpResponse.Body)
 
-	var prettyJSON bytes.Buffer
-	err = json.Indent(&prettyJSON, bodyBytes, "", "  ")
-	if err != nil {
-		log.Fatalf("invalid JSON: %v", err)
-	}
-
-	fmt.Println("Response body (pretty):")
-	fmt.Println(prettyJSON.String())
+	log.Println(string(bodyBytes))
+	fmt.Println(string(bodyBytes))
 
 	uri = *result.Model
 
