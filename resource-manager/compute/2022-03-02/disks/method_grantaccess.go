@@ -2,6 +2,7 @@ package disks
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -75,6 +76,13 @@ func (c DisksClient) GrantAccessThenPoll(ctx context.Context, id commonids.Manag
 
 	if err := result.Poller.FinalResult(result.Model); err != nil {
 		return uri, fmt.Errorf("performing FinalResult: %+v", err)
+	}
+
+	responseJson, err := json.MarshalIndent(result.HttpResponse, "", "  ")
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println(string(responseJson))
 	}
 
 	uri = *result.Model
