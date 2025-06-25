@@ -48,6 +48,7 @@ func (c DisksClient) GrantAccess(ctx context.Context, id commonids.ManagedDiskId
 	if resp != nil {
 		result.OData = resp.OData
 		result.HttpResponse = resp.Response
+		result.Model = &AccessUri{}
 	}
 	if err != nil {
 		return
